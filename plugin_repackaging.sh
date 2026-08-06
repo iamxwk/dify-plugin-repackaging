@@ -332,9 +332,10 @@ PY
 	[ -n "$PIP_PLATFORM" ] && echo "Platform: ${RAW_PLATFORM}"
 
 	if [ -f "requirements.txt" ]; then
-		echo "Sanitizing requirements.txt for flexible version matching..."
-		# 将所有的精确版本锁定 == 转换为 >=，让 pip 自动下载最新兼容的预编译 wheel
-		sed -i 's/==/>=/g' requirements.txt
+		echo "Sanitizing requirements.txt by removing rigid version pins..."
+		# 将 ==26.5.0 等版本号直接抹除，只保留包名（如 gevent==26.5.0 变为 gevent）
+		# 这样 pip 会自动下载 PyPI 上当前最新可用的版本
+		sed -i 's/==[0-9][0-9.]*//g' requirements.txt
 	fi
 	
 	mkdir -p ./wheels
