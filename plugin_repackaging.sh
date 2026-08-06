@@ -331,6 +331,12 @@ PY
 	echo "Index URL: ${PIP_MIRROR_URL}"
 	[ -n "$PIP_PLATFORM" ] && echo "Platform: ${RAW_PLATFORM}"
 
+	if [ -f "requirements.txt" ]; then
+		echo "Sanitizing invalid package versions in requirements.txt..."
+		# 1. 针对 gevent==26.5.0 进行修复，放宽为可用的 >=25.0.0
+		sed -i 's/gevent==[0-9.]*/gevent>=25.0.0/g' requirements.txt
+	fi
+	
 	mkdir -p ./wheels
 	echo "Downloading wheels to ./wheels/..."
 	${PIP_CMD} download ${PIP_PLATFORM} --prefer-binary -r requirements.txt -d ./wheels \
