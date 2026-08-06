@@ -331,11 +331,17 @@ PY
 	echo "Index URL: ${PIP_MIRROR_URL}"
 	[ -n "$PIP_PLATFORM" ] && echo "Platform: ${RAW_PLATFORM}"
 
+	# ---------------------------------------------------------------------
+	# 💡 【通用修复】自动修正 requirements.txt 中不存在的虚高版本号
+	# ---------------------------------------------------------------------
 	if [ -f "requirements.txt" ]; then
 		echo "Sanitizing invalid package versions in requirements.txt..."
-		# 1. 针对 gevent==26.5.0 进行修复，放宽为可用的 >=25.0.0
+		# 修复 gevent 虚高版本
 		sed -i 's/gevent==[0-9.]*/gevent>=25.0.0/g' requirements.txt
+		# 修复 greenlet 虚高版本
+		sed -i 's/greenlet==[0-9.]*/greenlet>=3.0.0/g' requirements.txt
 	fi
+	# ---------------------------------------------------------------------
 	
 	mkdir -p ./wheels
 	echo "Downloading wheels to ./wheels/..."
